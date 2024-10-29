@@ -9,53 +9,186 @@
                                       9 ; Public variables in this module
                                      10 ;--------------------------------------------------------
                                      11 	.globl _main
-                                     12 	.globl _wait_vbl_done
-                                     13 ;--------------------------------------------------------
-                                     14 ; special function registers
-                                     15 ;--------------------------------------------------------
-                                     16 ;--------------------------------------------------------
-                                     17 ; ram data
-                                     18 ;--------------------------------------------------------
-                                     19 	.area _DATA
-                                     20 ;--------------------------------------------------------
-                                     21 ; ram data
-                                     22 ;--------------------------------------------------------
-                                     23 	.area _INITIALIZED
+                                     12 	.globl _set_sprite_data
+                                     13 	.globl _wait_vbl_done
+                                     14 	.globl _joypad
+                                     15 	.globl _joypadPrevious
+                                     16 	.globl _joypadCurrent
+                                     17 	.globl _velocityY
+                                     18 	.globl _velocityX
+                                     19 	.globl _spriteY
+                                     20 	.globl _spriteX
+                                     21 ;--------------------------------------------------------
+                                     22 ; special function registers
+                                     23 ;--------------------------------------------------------
                                      24 ;--------------------------------------------------------
-                                     25 ; absolute external ram data
+                                     25 ; ram data
                                      26 ;--------------------------------------------------------
-                                     27 	.area _DABS (ABS)
-                                     28 ;--------------------------------------------------------
-                                     29 ; global & static initialisations
-                                     30 ;--------------------------------------------------------
-                                     31 	.area _HOME
-                                     32 	.area _GSINIT
-                                     33 	.area _GSFINAL
-                                     34 	.area _GSINIT
-                                     35 ;--------------------------------------------------------
-                                     36 ; Home
-                                     37 ;--------------------------------------------------------
-                                     38 	.area _HOME
-                                     39 	.area _HOME
-                                     40 ;--------------------------------------------------------
-                                     41 ; code
-                                     42 ;--------------------------------------------------------
-                                     43 	.area _CODE
-                                     44 ;main.c:3: void main(void)
-                                     45 ;	---------------------------------
-                                     46 ; Function main
-                                     47 ; ---------------------------------
-    00000000                         48 _main::
-                                     49 ;main.c:5: DISPLAY_ON;
-    00000000 F0r00            [12]   50 	ldh	a, (_LCDC_REG + 0)
-    00000002 F6 80            [ 8]   51 	or	a, #0x80
-    00000004 E0r00            [12]   52 	ldh	(_LCDC_REG + 0), a
-                                     53 ;main.c:8: while(1) {
-    00000006                         54 00102$:
-                                     55 ;main.c:11: wait_vbl_done();
-    00000006 CDr00r00         [24]   56 	call	_wait_vbl_done
-                                     57 ;main.c:13: }
-    00000009 18 FB            [12]   58 	jr	00102$
-                                     59 	.area _CODE
-                                     60 	.area _INITIALIZER
-                                     61 	.area _CABS (ABS)
+                                     27 	.area _DATA
+    00000000                         28 _spriteX::
+    00000000                         29 	.ds 1
+    00000001                         30 _spriteY::
+    00000001                         31 	.ds 1
+    00000002                         32 _velocityX::
+    00000002                         33 	.ds 1
+    00000003                         34 _velocityY::
+    00000003                         35 	.ds 1
+                                     36 ;--------------------------------------------------------
+                                     37 ; ram data
+                                     38 ;--------------------------------------------------------
+                                     39 	.area _INITIALIZED
+    00000000                         40 _joypadCurrent::
+    00000000                         41 	.ds 1
+    00000001                         42 _joypadPrevious::
+    00000001                         43 	.ds 1
+                                     44 ;--------------------------------------------------------
+                                     45 ; absolute external ram data
+                                     46 ;--------------------------------------------------------
+                                     47 	.area _DABS (ABS)
+                                     48 ;--------------------------------------------------------
+                                     49 ; global & static initialisations
+                                     50 ;--------------------------------------------------------
+                                     51 	.area _HOME
+                                     52 	.area _GSINIT
+                                     53 	.area _GSFINAL
+                                     54 	.area _GSINIT
+                                     55 ;--------------------------------------------------------
+                                     56 ; Home
+                                     57 ;--------------------------------------------------------
+                                     58 	.area _HOME
+                                     59 	.area _HOME
+                                     60 ;--------------------------------------------------------
+                                     61 ; code
+                                     62 ;--------------------------------------------------------
+                                     63 	.area _CODE
+                                     64 ;main.c:8: void main(void)
+                                     65 ;	---------------------------------
+                                     66 ; Function main
+                                     67 ; ---------------------------------
+    00000000                         68 _main::
+                                     69 ;main.c:10: DISPLAY_ON;
+    00000000 F0r00            [12]   70 	ldh	a, (_LCDC_REG + 0)
+    00000002 F6 80            [ 8]   71 	or	a, #0x80
+    00000004 E0r00            [12]   72 	ldh	(_LCDC_REG + 0), a
+                                     73 ;main.c:11: SHOW_SPRITES;
+    00000006 F0r00            [12]   74 	ldh	a, (_LCDC_REG + 0)
+    00000008 F6 02            [ 8]   75 	or	a, #0x02
+    0000000A E0r00            [12]   76 	ldh	(_LCDC_REG + 0), a
+                                     77 ;main.c:13: set_sprite_data(0,1,SimpleSprite);
+    0000000C 11r00r00         [12]   78 	ld	de, #_SimpleSprite
+    0000000F D5               [16]   79 	push	de
+    00000010 AF               [ 4]   80 	xor	a, a
+    00000011 3C               [ 4]   81 	inc	a
+    00000012 F5               [16]   82 	push	af
+    00000013 CDr00r00         [24]   83 	call	_set_sprite_data
+    00000016 E8 04            [16]   84 	add	sp, #4
+                                     85 ;/home/hacker/gbdk/include/gb/gb.h:1875: shadow_OAM[nb].tile=tile;
+    00000018 21r02r00         [12]   86 	ld	hl, #(_shadow_OAM + 2)
+    0000001B 36 00            [12]   87 	ld	(hl), #0x00
+                                     88 ;/home/hacker/gbdk/include/gb/gb.h:1961: OAM_item_t * itm = &shadow_OAM[nb];
+    0000001D 21r00r00         [12]   89 	ld	hl, #_shadow_OAM
+                                     90 ;/home/hacker/gbdk/include/gb/gb.h:1962: itm->y=y, itm->x=x;
+    00000020 3E 58            [ 8]   91 	ld	a, #0x58
+    00000022 22               [ 8]   92 	ld	(hl+), a
+    00000023 36 54            [12]   93 	ld	(hl), #0x54
+                                     94 ;main.c:18: spriteX=80;
+    00000025 21r00r00         [12]   95 	ld	hl, #_spriteX
+    00000028 36 50            [12]   96 	ld	(hl), #0x50
+                                     97 ;main.c:19: spriteY=72;
+    0000002A 21r01r00         [12]   98 	ld	hl, #_spriteY
+    0000002D 36 48            [12]   99 	ld	(hl), #0x48
+                                    100 ;main.c:22: velocityX=0;
+    0000002F 21r02r00         [12]  101 	ld	hl, #_velocityX
+    00000032 36 00            [12]  102 	ld	(hl), #0x00
+                                    103 ;main.c:23: velocityY=0;
+    00000034 21r03r00         [12]  104 	ld	hl, #_velocityY
+    00000037 36 00            [12]  105 	ld	(hl), #0x00
+                                    106 ;main.c:26: while(1) {
+    00000039                        107 00115$:
+                                    108 ;main.c:31: joypadPrevious=joypadCurrent;
+    00000039 FAr00r00         [16]  109 	ld	a, (#_joypadCurrent)
+    0000003C EAr01r00         [16]  110 	ld	(#_joypadPrevious),a
+                                    111 ;main.c:32: joypadCurrent = joypad();
+    0000003F CDr00r00         [24]  112 	call	_joypad
+    00000042 21r00r00         [12]  113 	ld	hl, #_joypadCurrent
+    00000045 77               [ 8]  114 	ld	(hl), a
+                                    115 ;main.c:35: if(joypadCurrent & J_RIGHT){
+    00000046 4E               [ 8]  116 	ld	c, (hl)
+    00000047 CB 41            [ 8]  117 	bit	0, c
+    00000049 28 07            [12]  118 	jr	Z, 00105$
+                                    119 ;main.c:38: velocityX=1;
+    0000004B 21r02r00         [12]  120 	ld	hl, #_velocityX
+    0000004E 36 01            [12]  121 	ld	(hl), #0x01
+    00000050 18 10            [12]  122 	jr	00106$
+    00000052                        123 00105$:
+                                    124 ;main.c:41: }else if(joypadCurrent & J_LEFT){
+    00000052 CB 49            [ 8]  125 	bit	1, c
+    00000054 28 07            [12]  126 	jr	Z, 00102$
+                                    127 ;main.c:44: velocityX=-1;
+    00000056 21r02r00         [12]  128 	ld	hl, #_velocityX
+    00000059 36 FF            [12]  129 	ld	(hl), #0xff
+    0000005B 18 05            [12]  130 	jr	00106$
+    0000005D                        131 00102$:
+                                    132 ;main.c:48: velocityX=0;
+    0000005D 21r02r00         [12]  133 	ld	hl, #_velocityX
+    00000060 36 00            [12]  134 	ld	(hl), #0x00
+    00000062                        135 00106$:
+                                    136 ;main.c:52: if((joypadCurrent & J_A) && !(joypadPrevious & J_A)){
+    00000062 21r01r00         [12]  137 	ld	hl, #_joypadPrevious
+    00000065 46               [ 8]  138 	ld	b, (hl)
+                                    139 ;main.c:55: spriteY+=8;
+    00000066 FAr01r00         [16]  140 	ld	a, (#_spriteY)
+                                    141 ;main.c:52: if((joypadCurrent & J_A) && !(joypadPrevious & J_A)){
+    00000069 CB 61            [ 8]  142 	bit	4, c
+    0000006B 28 0B            [12]  143 	jr	Z, 00111$
+    0000006D CB 60            [ 8]  144 	bit	4, b
+    0000006F 20 07            [12]  145 	jr	NZ, 00111$
+                                    146 ;main.c:55: spriteY+=8;
+    00000071 C6 08            [ 8]  147 	add	a, #0x08
+    00000073 EAr01r00         [16]  148 	ld	(#_spriteY),a
+    00000076 18 0D            [12]  149 	jr	00112$
+    00000078                        150 00111$:
+                                    151 ;main.c:58: } else if((joypadCurrent & J_B) && !(joypadPrevious & J_B)){
+    00000078 CB 69            [ 8]  152 	bit	5, c
+    0000007A 28 09            [12]  153 	jr	Z, 00112$
+    0000007C CB 68            [ 8]  154 	bit	5, b
+    0000007E 20 05            [12]  155 	jr	NZ, 00112$
+                                    156 ;main.c:61: spriteY-=8;
+    00000080 C6 F8            [ 8]  157 	add	a, #0xf8
+    00000082 EAr01r00         [16]  158 	ld	(#_spriteY),a
+    00000085                        159 00112$:
+                                    160 ;main.c:65: spriteX+=velocityX;
+    00000085 FAr00r00         [16]  161 	ld	a, (#_spriteX)
+    00000088 21r02r00         [12]  162 	ld	hl, #_velocityX
+    0000008B 86               [ 8]  163 	add	a, (hl)
+    0000008C EAr00r00         [16]  164 	ld	(#_spriteX),a
+                                    165 ;main.c:66: spriteY+=velocityY;
+    0000008F FAr01r00         [16]  166 	ld	a, (#_spriteY)
+    00000092 21r03r00         [12]  167 	ld	hl, #_velocityY
+    00000095 86               [ 8]  168 	add	a, (hl)
+    00000096 21r01r00         [12]  169 	ld	hl, #_spriteY
+    00000099 77               [ 8]  170 	ld	(hl), a
+                                    171 ;main.c:72: move_sprite(0,spriteX+4,spriteY+12);
+    0000009A 7E               [ 8]  172 	ld	a, (hl)
+    0000009B C6 0C            [ 8]  173 	add	a, #0x0c
+    0000009D 47               [ 4]  174 	ld	b, a
+    0000009E FAr00r00         [16]  175 	ld	a, (#_spriteX)
+    000000A1 C6 04            [ 8]  176 	add	a, #0x04
+    000000A3 4F               [ 4]  177 	ld	c, a
+                                    178 ;/home/hacker/gbdk/include/gb/gb.h:1961: OAM_item_t * itm = &shadow_OAM[nb];
+                                    179 ;/home/hacker/gbdk/include/gb/gb.h:1962: itm->y=y, itm->x=x;
+    000000A4 21r00r00         [12]  180 	ld	hl, #_shadow_OAM
+    000000A7 70               [ 8]  181 	ld	(hl), b
+    000000A8 21r01r00         [12]  182 	ld	hl, #(_shadow_OAM + 1)
+    000000AB 71               [ 8]  183 	ld	(hl), c
+                                    184 ;main.c:75: wait_vbl_done();
+    000000AC CDr00r00         [24]  185 	call	_wait_vbl_done
+                                    186 ;main.c:77: }
+    000000AF 18 88            [12]  187 	jr	00115$
+                                    188 	.area _CODE
+                                    189 	.area _INITIALIZER
+    00000000                        190 __xinit__joypadCurrent:
+    00000000 00                     191 	.db #0x00	; 0
+    00000001                        192 __xinit__joypadPrevious:
+    00000001 00                     193 	.db #0x00	; 0
+                                    194 	.area _CABS (ABS)

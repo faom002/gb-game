@@ -1,26 +1,28 @@
-# Makefile for GBDK project
+# Define the path to GBDK
+GBDK_PATH = ~/gbdk/bin
 
-# Set up GBDK path
-GBDK_PATH := ~/gbdk
-LCC := $(GBDK_PATH)/bin/lcc
+# Define the compiler and the flags
+CC = $(GBDK_PATH)/lcc
+CFLAGS = -c
 
-# Project files
-SRC := main.c
-OBJ := main.o
-OUTPUT := MinimalGameboyProject.gb
+# Define the target executable name
+TARGET = HandlingJoyadInputInGBDK.gb
 
-# Default target: build the .gb file
-all: $(OUTPUT)
+# Define the object files
+OBJS = main.o SimpleSprite.o
 
-# Rule to compile .c files into .o object files
-$(OBJ): $(SRC)
-	$(LCC) -c -o $(OBJ) $(SRC)
+# Default rule to build the target
+all: $(TARGET)
 
-# Rule to link the object files into a .gb ROM
-$(OUTPUT): $(OBJ)
-	$(LCC) -o $(OUTPUT) $(OBJ)
+# Rule to link object files into a .gb file
+$(TARGET): $(OBJS)
+	$(CC) -o $@ $^
 
-# Clean up generated files
+# Rule to compile .c files into .o files
+%.o: %.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+# Clean rule to remove generated files
 clean:
-	rm -f $(OUTPUT) *.asm *.lst *.ihx *.sym *.o
+	rm -f $(TARGET) *.asm *.lst *.ihx *.sym *.o
 

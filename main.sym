@@ -8,7 +8,19 @@ Symbol Table
     .__.CPU.                                                    =   00000000 L
     .__.H$L.                                                    =   00000000 L
     _LCDC_REG                                                       ******** GX
+    _SimpleSprite                                                   ******** GX
+  7 __xinit__joypadCurrent                                          00000000 R
+  7 __xinit__joypadPrevious                                         00000001 R
+    _joypad                                                         ******** GX
+  2 _joypadCurrent                                                  00000000 GR
+  2 _joypadPrevious                                                 00000001 GR
   0 _main                                                           00000000 GR
+    _set_sprite_data                                                ******** GX
+    _shadow_OAM                                                     ******** GX
+  1 _spriteX                                                        00000000 GR
+  1 _spriteY                                                        00000001 GR
+  1 _velocityX                                                      00000002 GR
+  1 _velocityY                                                      00000003 GR
     _wait_vbl_done                                                  ******** GX
 
 
@@ -17,13 +29,13 @@ Hexadecimal [32-Bits]
 
 Area Table
 
-   0 _CODE                                      size        B   flags    0
-   1 _DATA                                      size        0   flags    0
-   2 _INITIALIZED                               size        0   flags    0
+   0 _CODE                                      size       B1   flags    0
+   1 _DATA                                      size        4   flags    0
+   2 _INITIALIZED                               size        2   flags    0
    3 _DABS                                      size        0   flags    8
    4 _HOME                                      size        0   flags    0
    5 _GSINIT                                    size        0   flags    0
    6 _GSFINAL                                   size        0   flags    0
-   7 _INITIALIZER                               size        0   flags    0
+   7 _INITIALIZER                               size        2   flags    0
    8 _CABS                                      size        0   flags    8
 
