@@ -1,0 +1,25 @@
+XL4
+H 9 areas 4 global symbols
+M main
+O -msm83
+S .__.ABS. Def00000000
+S _LCDC_REG Ref00000000
+S _wait_vbl_done Ref00000000
+A _CODE size B flags 0 addr 0
+S _main Def00000000
+A _DATA size 0 flags 0 addr 0
+A _INITIALIZED size 0 flags 0 addr 0
+A _DABS size 0 flags 8 addr 0
+A _HOME size 0 flags 0 addr 0
+A _GSINIT size 0 flags 0 addr 0
+A _GSFINAL size 0 flags 0 addr 0
+A _INITIALIZER size 0 flags 0 addr 0
+A _CABS size 0 flags 8 addr 0
+T 00 00 00 00
+R 00 00 00 00
+T 00 00 00 00 F0 00 00 00 00 F6 80 E0 00 00 00 00
+R 00 00 00 00 0B 05 01 00 0B 0C 01 00
+T 06 00 00 00
+R 00 00 00 00
+T 06 00 00 00 CD 00 00 18 FB
+R 00 00 00 00 02 05 02 00
